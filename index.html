@@ -1,50 +1,206 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-lang="ko">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JANAS Studio</title>
-  <meta name="description" content="JANAS Studio — Glee Coloring 개발사">
+  <meta name="description" content="JANAS Studio — 귀엽고 편안한 모바일 게임을 만드는 1인 스튜디오. Glee Coloring 개발사.">
+  <meta property="og:title" content="JANAS Studio">
+  <meta property="og:description" content="Cozy, cute mobile games. Makers of Glee Coloring.">
+  <meta property="og:image" content="https://janas-studio.github.io/assets/glee_icon.png">
+  <link rel="icon" href="assets/glee_icon.png">
   <style>
-    :root { --bg: #f7f5fc; --card: #ffffff; --ink: #2b2540; --sub: #6f6887; --accent: #8b63e0; --line: #e6e0f3; }
+    /* 색은 게임 스플래시(#23242B)·타이틀(#8B63E0) 색을 그대로 씁니다. */
+    :root {
+      --night: #23242b; --night-2: #2e2f38;
+      --purple: #8b63e0; --purple-deep: #6c46c9; --lilac: #f3eefc; --mint: #3fd6b0; --gold: #ffcf4a; --pink: #ff7eb6;
+      --bg: #faf8ff; --card: #ffffff; --ink: #2b2540; --sub: #6f6887; --line: #e9e3f5;
+    }
     @media (prefers-color-scheme: dark) {
-      :root { --bg: #17141f; --card: #221d2e; --ink: #f1edfa; --sub: #b3abc9; --accent: #b294ff; --line: #352d45; }
+      :root { --bg: #17141f; --card: #221d2e; --ink: #f1edfa; --sub: #b3abc9; --line: #352d45; --lilac: #2a2238; }
     }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; line-height: 1.6; }
-    main { max-width: 640px; margin: 0 auto; padding: 48px 16px 64px; }
-    h1 { font-size: 32px; margin: 0 0 4px; }
-    .sub { color: var(--sub); margin: 0 0 32px; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
-    h2 { font-size: 20px; margin: 0 0 8px; }
-    p { margin: 0 0 12px; }
-    ul { margin: 0; padding-left: 20px; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    footer { color: var(--sub); font-size: 14px; text-align: center; margin-top: 32px; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); line-height: 1.65;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif; }
+    img { display: block; max-width: 100%; }
+    a { color: var(--purple); }
+
+    /* 언어: <html data-lang="ko|en">에 맞는 문장만 보입니다. */
+    html[data-lang="ko"] [lang="en"], html[data-lang="en"] [lang="ko"] { display: none !important; }
+
+    /* ---------- 상단: 스튜디오 소개(스플래시 화면과 같은 어두운 배경) ---------- */
+    .hero { position: relative; overflow-x: clip; background: radial-gradient(120% 90% at 50% 0%, #34354a 0%, var(--night) 60%); color: #fff; }
+    .hero-inner { max-width: 960px; margin: 0 auto; padding: 28px 16px 72px; position: relative; z-index: 1; }
+    .topbar { display: flex; justify-content: flex-end; }
+    .lang { display: inline-flex; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); border-radius: 999px; padding: 3px; }
+    .lang button { all: unset; cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 999px; color: rgba(255,255,255,.7); }
+    .lang button[aria-pressed="true"] { background: #fff; color: var(--night); }
+    .brand { display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 36px; }
+    .brand .character { width: 150px; animation: pop .7s cubic-bezier(.2,1.4,.4,1) both; }
+    .brand .wordmark { width: min(360px, 78vw); margin-top: 18px; animation: rise .6s .15s ease-out both; }
+    .tagline { margin: 20px 0 0; font-size: 18px; color: rgba(255,255,255,.82); animation: rise .6s .3s ease-out both; }
+    .hero-links { margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; animation: rise .6s .45s ease-out both; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 15px; text-decoration: none; }
+    .chip.solid { background: var(--purple); color: #fff; box-shadow: 0 6px 0 var(--purple-deep); }
+    .chip.ghost { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.2); }
+    .chip:active { transform: translateY(3px); box-shadow: none; }
+
+    /* 반짝이는 픽셀 별: 들어올 때 한 번만 반짝이고 멈춥니다(무한 반복 없음). */
+    .spark { position: absolute; width: 14px; height: 14px; opacity: 0; animation: twinkle 1.6s ease-out forwards; }
+    .spark::before, .spark::after { content: ""; position: absolute; background: currentColor; }
+    .spark::before { left: 5px; top: 0; width: 4px; height: 14px; }
+    .spark::after { left: 0; top: 5px; width: 14px; height: 4px; }
+    /* 물결이 배경 아래로 2px 넘쳐 덮어서, 높이가 소수점일 때 생기는 1px 어두운 줄을 없앱니다. */
+    .hero .wave { position: absolute; left: 0; right: 0; bottom: -2px; height: 42px; background: var(--bg); clip-path: ellipse(70% 100% at 50% 100%); }
+
+    @keyframes pop { 0% { opacity: 0; transform: scale(.6); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes rise { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: none; } }
+    /* 게임 아이콘의 ‘+’ 모양 반짝이: 한 바퀴(90°) 돌며 커졌다가 바로 선 모양으로 멈춤 */
+    @keyframes twinkle { 0% { opacity: 0; transform: scale(.3) rotate(-90deg); } 45% { opacity: 1; transform: scale(1.25) rotate(0); } 100% { opacity: .6; transform: scale(1) rotate(0); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; opacity: 1; } }
+
+    /* ---------- 본문 ---------- */
+    main { max-width: 960px; margin: 0 auto; padding: 8px 16px 64px; }
+    .section-title { font-size: 14px; font-weight: 800; letter-spacing: .12em; color: var(--purple); margin: 40px 0 14px; text-transform: uppercase; }
+
+    /* 게임 카드: 타이틀 화면 보라 배경 + 로고 + 고양이 */
+    .game { display: grid; grid-template-columns: 1.1fr 1fr; border-radius: 28px; overflow: hidden; background: var(--card); border: 1px solid var(--line); box-shadow: 0 18px 40px -24px rgba(80, 50, 160, .45); }
+    .game-art { position: relative; background: linear-gradient(160deg, #9b77ea 0%, var(--purple) 55%, #7650d6 100%); padding: 28px 24px 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 320px; }
+    .game-art .logo { width: min(340px, 90%); }
+    .game-art .cat { width: 190px; margin-top: -6px; filter: drop-shadow(0 10px 14px rgba(40, 20, 90, .35)); }
+    .game-info { padding: 28px; display: flex; flex-direction: column; }
+    .game-head { display: flex; align-items: center; gap: 14px; }
+    .game-head img { width: 64px; height: 64px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+    .game-head h2 { margin: 0; font-size: 24px; }
+    .game-info p { color: var(--sub); margin: 16px 0; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; padding: 0; list-style: none; }
+    .tags li { font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 999px; background: var(--lilac); color: var(--purple); }
+    .game-links { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; }
+
+    /* 정책·문의 카드 */
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px 24px; }
+    .card h3 { margin: 0 0 6px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    .card p { margin: 0 0 12px; color: var(--sub); font-size: 15px; }
+    .card .icon { width: 30px; height: 30px; border-radius: 10px; display: inline-grid; place-items: center; font-size: 16px; }
+    .links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .links a { font-weight: 700; font-size: 14px; text-decoration: none; padding: 7px 14px; border-radius: 999px; background: var(--lilac); }
+    .links a:hover { background: var(--purple); color: #fff; }
+
+    footer { text-align: center; color: var(--sub); font-size: 13px; padding: 28px 16px 40px; }
+
+    @media (max-width: 720px) {
+      .game { grid-template-columns: 1fr; }
+      .game-art { min-height: 0; }
+      .grid { grid-template-columns: 1fr; }
+      .brand .character { width: 120px; }
+      .tagline { font-size: 16px; }
+    }
   </style>
 </head>
 <body>
+  <header class="hero">
+    <!-- 픽셀 별 장식: 위치·색·등장 지연만 다르고 한 번 반짝인 뒤 멈춤 -->
+    <span class="spark" style="left:9%;top:22%;color:var(--gold);animation-delay:.3s"></span>
+    <span class="spark" style="left:84%;top:18%;color:var(--mint);animation-delay:.55s"></span>
+    <span class="spark" style="left:7%;top:48%;color:var(--pink);animation-delay:.8s"></span>
+    <span class="spark" style="left:76%;top:62%;color:#fff;animation-delay:1s"></span>
+    <span class="spark" style="left:50%;top:9%;color:var(--purple);animation-delay:1.2s"></span>
+    <div class="hero-inner">
+      <div class="topbar">
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" data-set-lang="ko" aria-pressed="true">한국어</button>
+          <button type="button" data-set-lang="en" aria-pressed="false">English</button>
+        </div>
+      </div>
+      <div class="brand">
+        <img class="character" src="assets/janas_character.png" alt="">
+        <img class="wordmark" src="assets/janas_wordmark.png" alt="JANAS Studio">
+        <p class="tagline"><span lang="ko">귀엽고 편안한 모바일 게임을 만듭니다.</span><span lang="en">We make cozy, cute mobile games.</span></p>
+        <div class="hero-links">
+          <a class="chip solid" href="#games"><span lang="ko">게임 보기</span><span lang="en">Our games</span></a>
+          <a class="chip ghost" href="#contact"><span lang="ko">문의하기</span><span lang="en">Contact</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="wave"></div>
+  </header>
+
   <main>
-    <h1>JANAS Studio</h1>
-    <p class="sub">귀엽고 편안한 모바일 게임을 만듭니다. · Cozy, cute mobile games.</p>
+    <h2 class="section-title" id="games"><span lang="ko">게임</span><span lang="en">Games</span></h2>
+    <article class="game">
+      <div class="game-art">
+        <img class="logo" src="assets/glee_logo.png" alt="Glee Coloring">
+        <img class="cat" src="assets/glee_cat.png" alt="">
+      </div>
+      <div class="game-info">
+        <div class="game-head">
+          <img src="assets/glee_icon.png" alt="">
+          <h2>Glee Coloring</h2>
+        </div>
+        <p lang="ko">보석 블록을 옮겨 픽셀 그림을 완성하는 컬러링 퍼즐 게임이에요. 도안을 하나씩 칠해 갤러리를 채워 보세요.</p>
+        <p lang="en">A cozy coloring puzzle where you move gem blocks to complete pixel art. Fill each pattern and build your gallery.</p>
+        <ul class="tags">
+          <li><span lang="ko">퍼즐</span><span lang="en">Puzzle</span></li>
+          <li><span lang="ko">픽셀 아트</span><span lang="en">Pixel art</span></li>
+          <li><span lang="ko">힐링</span><span lang="en">Relaxing</span></li>
+          <li><span lang="ko">무료</span><span lang="en">Free</span></li>
+        </ul>
+        <div class="game-links">
+          <a lang="ko" href="https://sites.google.com/view/js-glee-legal-url-ko">법률 및 라이선스</a>
+          <a lang="en" href="https://sites.google.com/view/js-glee-legal-url-en">Legal &amp; Licenses</a>
+        </div>
+      </div>
+    </article>
 
-    <section class="card">
-      <h2>Glee Coloring</h2>
-      <p>보석 블록을 옮겨 픽셀 그림을 완성하는 컬러링 퍼즐 게임입니다.<br>
-      A cozy puzzle game where you move gem blocks to complete pixel art.</p>
-      <ul>
-        <li><a href="https://sites.google.com/view/js-privacy-policy-ko">개인정보 처리방침</a> · <a href="https://sites.google.com/view/js-privacy-policy-en">Privacy Policy</a></li>
-        <li><a href="https://sites.google.com/view/js-glee-legal-url-ko">법률 및 라이선스</a> · <a href="https://sites.google.com/view/js-glee-legal-url-en">Legal &amp; Licenses</a></li>
-      </ul>
-    </section>
-
-    <section class="card">
-      <h2>문의 · Contact</h2>
-      <p><a href="mailto:pioneer.janas@gmail.com">pioneer.janas@gmail.com</a></p>
-    </section>
-
-    <footer>© JANAS Studio</footer>
+    <h2 class="section-title"><span lang="ko">안내</span><span lang="en">Info</span></h2>
+    <div class="grid">
+      <section class="card">
+        <h3><span class="icon" style="background:#e9fbf5">🔒</span><span lang="ko">개인정보 처리방침</span><span lang="en">Privacy Policy</span></h3>
+        <p lang="ko">JANAS Studio의 모든 게임·앱에 공통으로 적용됩니다.</p>
+        <p lang="en">Applies to all JANAS Studio games and apps.</p>
+        <div class="links">
+          <a href="https://sites.google.com/view/js-privacy-policy-ko">한국어</a>
+          <a href="https://sites.google.com/view/js-privacy-policy-en">English</a>
+        </div>
+      </section>
+      <section class="card" id="contact">
+        <h3><span class="icon" style="background:#fff3c4">✉️</span><span lang="ko">문의</span><span lang="en">Contact</span></h3>
+        <p lang="ko">게임 이용 문의, 버그 제보, 제안은 이메일로 보내 주세요.</p>
+        <p lang="en">Questions, bug reports, or ideas? Send us an email.</p>
+        <div class="links"><a href="mailto:pioneer.janas@gmail.com">pioneer.janas@gmail.com</a></div>
+      </section>
+    </div>
   </main>
+
+  <footer>
+    © 2026 JANAS Studio
+  </footer>
+
+  <script>
+    // 언어 선택: 저장된 선택 → 브라우저 언어(한국어면 ko, 그 외 en) 순으로 정하고, 버튼으로 바꾸면 기억합니다.
+    (function () {
+      var root = document.documentElement;
+      function apply(lang) {
+        root.setAttribute('data-lang', lang);
+        root.setAttribute('lang', lang);
+        document.querySelectorAll('[data-set-lang]').forEach(function (b) {
+          b.setAttribute('aria-pressed', String(b.getAttribute('data-set-lang') === lang));
+        });
+      }
+      var saved = null;
+      try { saved = localStorage.getItem('janas-lang'); } catch (e) {}
+      var nav = (navigator.language || 'en').toLowerCase();
+      apply(saved === 'ko' || saved === 'en' ? saved : (nav.indexOf('ko') === 0 ? 'ko' : 'en'));
+      document.querySelectorAll('[data-set-lang]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var lang = b.getAttribute('data-set-lang');
+          apply(lang);
+          try { localStorage.setItem('janas-lang', lang); } catch (e) {}
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
