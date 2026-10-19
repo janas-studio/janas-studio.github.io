@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://janas-studio.github.io/sitemap.xml
