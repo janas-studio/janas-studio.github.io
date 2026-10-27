@@ -13,4 +13,11 @@ function setLanguage(value){manualLanguageChosen=true;language=value;try{localSt
 document.querySelectorAll('[data-language]').forEach(b=>b.addEventListener('click',()=>setLanguage(b.dataset.language)));let saved;try{saved=localStorage.getItem('janas-language')}catch{}const requested=new URLSearchParams(location.search).get('lang');const explicitLanguage=['ko','en'].includes(requested)?requested:['ko','en'].includes(saved)?saved:null;
 // 언어 결정 순서: ?lang= 주소 → 저장된 선택(KO/EN 버튼) → 브라우저 언어(한국어면 ko, 그 외 en).
 // 디자인 원본(ChatGPT Sites)에 있던 국가 확인(/cdn-cgi/trace)은 GitHub Pages에서 동작하지 않아 뺐습니다.
-language=explicitLanguage||(/^ko(?:-|$)/i.test(navigator.language||'')?'ko':'en');translatePage();
+// 검색 로봇(2026-10-27): 구글 로봇은 영어 환경이라 자동 전환하면 설명(meta, 한국어)과 본문(영어)이 섞여 보였습니다.
+// 로봇은 주소에 ?lang=이 없으면 원래 한국어 화면을 그대로 봅니다(한국 사용자와 같은 화면). 영어판은 ?lang=en 주소로 따로 읽습니다.
+const isCrawler=/bot|crawl|spider|slurp|lighthouse|google-inspectiontool/i.test(navigator.userAgent||'');
+language=explicitLanguage||(isCrawler||/^ko(?:-|$)/i.test(navigator.language||'')?'ko':'en');translatePage();
+// 대표 주소(canonical): 주소에 ?lang=en이 있으면 영어판 주소, 그 밖(루트·?lang=ko)은 루트를 대표로 둡니다.
+// index.html 머리의 한국어·영어판 연결(hreflang)과 짝을 맞추기 위해 HTML에 고정하지 않고 여기서 한 번만 정합니다.
+// (KO/EN 버튼으로 주소의 lang이 바뀌어도 대표 주소는 처음 연 주소 기준으로 둡니다. 로봇은 버튼을 누르지 않습니다.)
+(()=>{const link=document.createElement('link');link.rel='canonical';link.href=requested==='en'?'https://janas-studio.github.io/?lang=en':'https://janas-studio.github.io/';document.head.append(link);})();

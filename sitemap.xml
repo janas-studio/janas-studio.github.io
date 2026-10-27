@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- 한국어판(루트)·영어판(?lang=en)을 서로 연결합니다(index.html의 hreflang과 같음). -->
   <url>
     <loc>https://janas-studio.github.io/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-27</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.github.io/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.github.io/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.github.io/"/>
+  </url>
+  <url>
+    <loc>https://janas-studio.github.io/?lang=en</loc>
+    <lastmod>2026-10-27</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.github.io/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.github.io/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.github.io/"/>
   </url>
 </urlset>
