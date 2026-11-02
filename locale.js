@@ -20,4 +20,4 @@ language=explicitLanguage||(isCrawler||/^ko(?:-|$)/i.test(navigator.language||''
 // 대표 주소(canonical): 주소에 ?lang=en이 있으면 영어판 주소, 그 밖(루트·?lang=ko)은 루트를 대표로 둡니다.
 // index.html 머리의 한국어·영어판 연결(hreflang)과 짝을 맞추기 위해 HTML에 고정하지 않고 여기서 한 번만 정합니다.
 // (KO/EN 버튼으로 주소의 lang이 바뀌어도 대표 주소는 처음 연 주소 기준으로 둡니다. 로봇은 버튼을 누르지 않습니다.)
-(()=>{const link=document.createElement('link');link.rel='canonical';link.href=requested==='en'?'https://janas-studio.github.io/?lang=en':'https://janas-studio.github.io/';document.head.append(link);})();
+(()=>{const link=document.createElement('link');link.rel='canonical';link.href=requested==='en'?'https://janas-studio.com/?lang=en':'https://janas-studio.com/';document.head.append(link);})();
