@@ -3,16 +3,46 @@
   <!-- 한국어판(루트)·영어판(?lang=en)을 서로 연결합니다(index.html의 hreflang과 같음). -->
   <url>
     <loc>https://janas-studio.com/</loc>
-    <lastmod>2026-11-02</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.com/?lang=en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.com/"/>
   </url>
   <url>
     <loc>https://janas-studio.com/?lang=en</loc>
-    <lastmod>2026-11-02</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.com/?lang=en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.com/"/>
+  </url>
+  <!-- 개인정보 처리방침 한국어판(privacy/ko/)·영어판(privacy/en/), 2026-11-12 추가. 처리방침을 고치면 lastmod 갱신. -->
+  <url>
+    <loc>https://janas-studio.com/privacy/ko/</loc>
+    <lastmod>2026-11-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.com/privacy/ko/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.com/privacy/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.com/privacy/ko/"/>
+  </url>
+  <url>
+    <loc>https://janas-studio.com/privacy/en/</loc>
+    <lastmod>2026-11-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.com/privacy/ko/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.com/privacy/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.com/privacy/ko/"/>
+  </url>
+  <!-- Glee Coloring 법률 및 라이선스 한국어판(glee/legal/ko/)·영어판(glee/legal/en/), 2026-11-12 추가. 고치면 lastmod 갱신. -->
+  <url>
+    <loc>https://janas-studio.com/glee/legal/ko/</loc>
+    <lastmod>2026-11-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.com/glee/legal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.com/glee/legal/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.com/glee/legal/ko/"/>
+  </url>
+  <url>
+    <loc>https://janas-studio.com/glee/legal/en/</loc>
+    <lastmod>2026-11-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.com/glee/legal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.com/glee/legal/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.com/glee/legal/ko/"/>
   </url>
 </urlset>
