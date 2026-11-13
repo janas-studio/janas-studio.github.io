@@ -3,14 +3,14 @@
   <!-- 한국어판(루트)·영어판(?lang=en)을 서로 연결합니다(index.html의 hreflang과 같음). -->
   <url>
     <loc>https://janas-studio.com/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.com/?lang=en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.com/"/>
   </url>
   <url>
     <loc>https://janas-studio.com/?lang=en</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://janas-studio.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://janas-studio.com/?lang=en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://janas-studio.com/"/>
