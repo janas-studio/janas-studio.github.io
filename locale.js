@@ -19,9 +19,9 @@ document.querySelectorAll('[data-language]').forEach(b=>b.addEventListener('clic
 const isCrawler=/bot|crawl|spider|slurp|lighthouse|google-inspectiontool/i.test(navigator.userAgent||'');
 language=explicitLanguage||(isCrawler||/^ko(?:-|$)/i.test(navigator.language||'')?'ko':'en');translatePage();
 // 대표 주소(canonical): 주소에 ?lang=en이 있으면 영어판 주소, 그 밖(루트·?lang=ko)은 루트를 대표로 둡니다.
-// index.html 머리의 한국어·영어판 연결(hreflang)과 짝을 맞추기 위해 HTML에 고정하지 않고 여기서 한 번만 정합니다.
+// index.html 머리에 루트 주소로 적어 둔 canonical 태그(2026-11-25, 스크립트 없이도 읽히게)를 ?lang=en일 때만 영어판 주소로 고칩니다(태그가 없으면 만듦).
 // (KO/EN 버튼으로 주소의 lang이 바뀌어도 대표 주소는 처음 연 주소 기준으로 둡니다. 로봇은 버튼을 누르지 않습니다.)
-(()=>{const link=document.createElement('link');link.rel='canonical';link.href=requested==='en'?'https://janas-studio.com/?lang=en':'https://janas-studio.com/';document.head.append(link);})();
+(()=>{let link=document.querySelector('link[rel=canonical]');if(!link){link=document.createElement('link');link.rel='canonical';document.head.append(link);}link.href=requested==='en'?'https://janas-studio.com/?lang=en':'https://janas-studio.com/';})();
 // 파일로 직접 열면(file://) 폴더 주소(privacy/ko/·glee/legal/en/ 등)가 index.html 대신 폴더 목록을 보여 주므로, 그때만 링크 끝에 index.html을 붙입니다.
 // 실제 사이트에서는 깔끔한 주소를 그대로 씁니다. 외부 주소·#·mailto는 건드리지 않습니다(법률 페이지에도 같은 규칙이 있음).
 // localHref는 언어를 바꿀 때 법률 링크를 다시 넣는 translatePage에서도 씁니다(함수 선언이라 위에서 먼저 불러도 됨).
