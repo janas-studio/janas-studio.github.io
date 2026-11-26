@@ -111,9 +111,11 @@ footer a{color:inherit}
 <footer><div><span>© 2026 JANAS Studio</span><a href="../../../">홈페이지</a></div></footer>
 <script>
 // 파일로 직접 열면(file://) 폴더 주소가 index.html을 열지 않고 폴더 목록을 보여 주므로,
-// 그때만 '…/'로 끝나는 상대 링크(../, en/, ../../?lang=en 등)에 index.html을 붙입니다.
-// 실제 사이트에서는 깔끔한 주소(/privacy/ 등)를 그대로 씁니다. 외부 주소·#·mailto는 건드리지 않습니다.
-if(location.protocol==='file:')document.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href');if(/^[^:#\/][^:]*\/(\?.*)?$/.test(h))a.setAttribute('href',h.replace(/\/(\?.*)?$/,'/index.html$1'));});
+// 그때만 '…/'로 끝나는 상대 링크(../, en/ 등)에 index.html을 붙입니다.
+// 영어 홈(../../en)은 GitHub Pages만 en.html로 열어 주므로, 파일로 열거나 내 컴퓨터 서버(localhost·127.0.0.1)에서는 .html을 붙입니다.
+// 실제 사이트에서는 깔끔한 주소(/privacy/, /en 등)를 그대로 씁니다. 외부 주소·#·mailto는 건드리지 않습니다.
+const fileMode=location.protocol==='file:',localMode=fileMode||/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+document.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href');if(fileMode&&/^[^:#\/][^:]*\/(\?.*)?$/.test(h))a.setAttribute('href',h.replace(/\/(\?.*)?$/,'/index.html$1'));else if(localMode&&/^[^:#\/][^:]*\/en$/.test(h))a.setAttribute('href',h+'.html');});
 // 배너를 지나면 상단 바에 어두운 바탕을 깝니다.
 const bar=document.querySelector('.bar');
 const update=()=>bar.classList.toggle('solid',scrollY>8);

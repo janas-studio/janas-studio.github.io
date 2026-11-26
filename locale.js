@@ -10,18 +10,22 @@ function translate(value){if(translations[value])return translations[value];if(v
 // translatePage는 글자·대체 글을 바꾸고, 스토어 배지(img[data-badge])도 언어에 맞는 badges/<이름>-ko|en 그림으로, 언어별 주소가 있는 링크(a[data-href-ko|en])는 그 주소로 바꿉니다(2026-11-13).
 function translatePage(){const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode()){if(node.parentElement.closest('script,style,.language-switch'))continue;if(!originalText.has(node))originalText.set(node,node.nodeValue);const original=originalText.get(node);node.nodeValue=language==='en'?original.replace(original.trim(),translate(original.trim())):original;}document.querySelectorAll('[alt],[aria-label]').forEach(el=>{if(el.closest('.language-switch'))return;if(!originalAttributes.has(el))originalAttributes.set(el,{alt:el.getAttribute('alt'),label:el.getAttribute('aria-label')});const a=originalAttributes.get(el);if(a.alt!==null)el.setAttribute('alt',language==='en'?translate(a.alt):a.alt);if(a.label!==null)el.setAttribute('aria-label',language==='en'?translate(a.label):a.label);});document.querySelectorAll('a[data-href-en]').forEach(a=>{a.href=language==='en'?a.dataset.hrefEn:a.dataset.hrefKo;});document.querySelectorAll('img[data-badge]').forEach(img=>{const [name,ext]=img.dataset.badge.split('.');img.src='badges/'+name+'-'+(language==='en'?'en':'ko')+'.'+ext;});document.getElementById('legal-link').setAttribute('href',localHref('glee/legal/'+language+'/'));document.querySelectorAll('#track button').forEach((button,i)=>{const src='screen-'+(language==='en'?'en-':'')+String(i+1).padStart(3,'0')+'.webp';button.querySelector('img').src=src;button.onclick=()=>showImage(src,titles[i]);});document.documentElement.lang=language;document.title=language==='en'?'JANAS Studio | Little puzzles, brighter days':'자나스 스튜디오 | 작은 퍼즐, 반짝이는 하루';document.querySelectorAll('[data-language]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.language===language)));}
 const originalShowImage=showImage;showImage=(src,title)=>{originalShowImage(src,language==='en'?translate(title):title);};
-function setLanguage(value){manualLanguageChosen=true;language=value;try{localStorage.setItem('janas-language',value)}catch{}translatePage();const url=new URL(location.href);url.searchParams.set('lang',value);history.replaceState(null,'',url);}
+// 2026-11-27부터 한국어판(index.html, 주소 /)과 영어판(en.html, 주소 /en — tools/build_en_page.py가 만듦)이 따로 있고 이 파일을 함께 씁니다.
+// 예전에는 한 페이지를 화면에서만 영어로 바꿨는데(?lang=en), 검색 로봇이 받는 HTML이 한국어 그대로라 구글이 영어판을 중복으로 보고 색인하지 않았습니다.
+// 페이지 언어는 <html data-page-lang="en">(영어판)으로 구분합니다. 영어판의 본문은 이미 영어이고, 여기서는 스크립트가 만드는 부분(게임 화면·갤러리 제목 등)만 바꿉니다.
+const pageLanguage=document.documentElement.dataset.pageLang==='en'?'en':'ko';
+// 다른 언어 페이지 주소: 사이트에서는 ./(=/)·en(=/en, GitHub Pages가 en.html을 엶), 파일로 직접 열거나 내 컴퓨터 서버(localhost·127.0.0.1)에서는 index.html·en.html. 보던 위치(#games 등)는 이어 갑니다.
+function pageHref(lang){const local=location.protocol==='file:'||/^(localhost|127\.0\.0\.1)$/.test(location.hostname);return(lang==='en'?(local?'en.html':'en'):(local?'index.html':'./'))+location.hash;}
+// KO/EN 버튼: 선택을 저장하고, 지금 페이지와 다른 언어면 그 언어 페이지로 옮깁니다.
+function setLanguage(value){manualLanguageChosen=true;try{localStorage.setItem('janas-language',value)}catch{}if(value!==pageLanguage){location.href=pageHref(value);return;}language=value;translatePage();}
 document.querySelectorAll('[data-language]').forEach(b=>b.addEventListener('click',()=>setLanguage(b.dataset.language)));let saved;try{saved=localStorage.getItem('janas-language')}catch{}const requested=new URLSearchParams(location.search).get('lang');const explicitLanguage=['ko','en'].includes(requested)?requested:['ko','en'].includes(saved)?saved:null;
-// 언어 결정 순서: ?lang= 주소 → 저장된 선택(KO/EN 버튼) → 브라우저 언어(한국어면 ko, 그 외 en).
+// 한국어판에서 언어 결정 순서: ?lang= 주소(예전 링크) → 저장된 선택(KO/EN 버튼) → 브라우저 언어(한국어면 ko, 그 외 en). 영어로 정해지면 영어판(/en)으로 옮깁니다.
+// 영어판(/en)은 주소대로 항상 영어로 둡니다(검색에서 /en을 누른 사람은 영어를 원함).
 // 디자인 원본(ChatGPT Sites)에 있던 국가 확인(/cdn-cgi/trace)은 GitHub Pages에서 동작하지 않아 뺐습니다.
-// 검색 로봇(2026-10-27): 구글 로봇은 영어 환경이라 자동 전환하면 설명(meta, 한국어)과 본문(영어)이 섞여 보였습니다.
-// 로봇은 주소에 ?lang=이 없으면 원래 한국어 화면을 그대로 봅니다(한국 사용자와 같은 화면). 영어판은 ?lang=en 주소로 따로 읽습니다.
+// 검색 로봇(2026-10-27)은 옮기지 않습니다. 로봇은 각 페이지를 HTML 그대로 읽고, 대표 주소(canonical)는 두 페이지 HTML에 직접 적혀 있습니다.
 const isCrawler=/bot|crawl|spider|slurp|lighthouse|google-inspectiontool/i.test(navigator.userAgent||'');
-language=explicitLanguage||(isCrawler||/^ko(?:-|$)/i.test(navigator.language||'')?'ko':'en');translatePage();
-// 대표 주소(canonical): 주소에 ?lang=en이 있으면 영어판 주소, 그 밖(루트·?lang=ko)은 루트를 대표로 둡니다.
-// index.html 머리에 루트 주소로 적어 둔 canonical 태그(2026-11-25, 스크립트 없이도 읽히게)를 ?lang=en일 때만 영어판 주소로 고칩니다(태그가 없으면 만듦).
-// (KO/EN 버튼으로 주소의 lang이 바뀌어도 대표 주소는 처음 연 주소 기준으로 둡니다. 로봇은 버튼을 누르지 않습니다.)
-(()=>{let link=document.querySelector('link[rel=canonical]');if(!link){link=document.createElement('link');link.rel='canonical';document.head.append(link);}link.href=requested==='en'?'https://janas-studio.com/?lang=en':'https://janas-studio.com/';})();
+const wanted=explicitLanguage||(isCrawler||/^ko(?:-|$)/i.test(navigator.language||'')?'ko':'en');
+if(pageLanguage==='ko'&&wanted==='en'&&!isCrawler){location.replace(pageHref('en'));}else{language=pageLanguage;translatePage();}
 // 파일로 직접 열면(file://) 폴더 주소(privacy/ko/·glee/legal/en/ 등)가 index.html 대신 폴더 목록을 보여 주므로, 그때만 링크 끝에 index.html을 붙입니다.
 // 실제 사이트에서는 깔끔한 주소를 그대로 씁니다. 외부 주소·#·mailto는 건드리지 않습니다(법률 페이지에도 같은 규칙이 있음).
 // localHref는 언어를 바꿀 때 법률 링크를 다시 넣는 translatePage에서도 씁니다(함수 선언이라 위에서 먼저 불러도 됨).
